@@ -11,11 +11,15 @@ A minimalist personal webpage that displays a user's name with a clean, modern d
 ## Technologies Used
 - HTML5
 - Tailwind CSS
-- Flask (Python web framework)
 - CSS animations
 
 ## Getting Started
 1. Clone the repository
-2. Install the requirements: `pip install flask`
-3. Run the application: `python main.py`
-4. Visit `http://localhost:5000` in your browser
+2. Open `index.html` in your browser
+3. Edit the "Your Name" text in `index.html` to display your name
+
+## Customization
+You can customize the appearance by:
+- Modifying the colors in the Tailwind classes
+- Adjusting the animation timing in the CSS
+- Changing the font sizes and spacing using Tailwind's utility classes

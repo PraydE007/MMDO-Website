@@ -13,11 +13,6 @@ A minimalist personal webpage that displays a user's name with a clean, modern d
 - Tailwind CSS
 - CSS animations
 
-## Getting Started
-1. Clone the repository
-2. Open `index.html` in your browser
-3. Edit the "Your Name" text in `index.html` to display your name
-
 ## Customization
 You can customize the appearance by:
 - Modifying the colors in the Tailwind classes

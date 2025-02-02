@@ -1,4 +1,4 @@
-# Personal Webpage
+# MMDO Website
 
 A minimalist personal webpage that displays a user's name with a clean, modern design.
 

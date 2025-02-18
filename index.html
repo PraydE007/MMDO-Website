@@ -83,19 +83,49 @@
             const heading = this.querySelector('h1');
             heading.textContent = sum.toString();
 
-            const ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Січ', 'Лют', 'Бер', 'Кві'],
-                    datasets: [{
-                        label: 'Продажі',
-                        data: [10, 20, 15, 30],
-                        borderColor: 'blue',
-                        borderWidth: 2
-                    }]
+            //-- Графіки
+
+            // Функція, яку хочемо намалювати (наприклад, y = x^2)
+        function generateData(func, rangeStart, rangeEnd, step = 0.1) {
+            const data = [];
+            for (let x = rangeStart; x <= rangeEnd; x += step) {
+                data.push({ x: x, y: func(x) });
+            }
+            return data;
+        }
+
+        // Визначаємо саму функцію (наприклад, y = x^2)
+        const functionData = generateData(x => x * x, -5, 5, 0.1);
+
+        // Отримуємо canvas
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        // Створюємо графік
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'y = x²',
+                    data: functionData, // Масив {x, y}
+                    borderColor: 'blue',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0 // Прибираємо точки для гладкого графіка
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear', // Декартова система координат
+                        position: 'bottom'
+                    },
+                    y: {
+                        type: 'linear'
+                    }
                 }
-            });
+            }
+        });
         });
     </script>
 </body>

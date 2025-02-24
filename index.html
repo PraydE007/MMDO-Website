@@ -95,7 +95,7 @@
             for (let i = 0; i < count; i++) {
                 const div = document.createElement('div');
                 div.textContent = ``;
-                div.classList.add(("flex items-center space-x-4").split(" "));
+                div.classList.add(...("flex items-center space-x-4").split(" "));
                 ccontainer.appendChild(div);
             }
         }

@@ -72,32 +72,30 @@
             const var1 = parseFloat(document.getElementById('var1').value);
             const var2 = parseFloat(document.getElementById('var2').value);
 
-            const con1 = parseFloat(document.getElementById('con1').value);
-            const con2 = parseFloat(document.getElementById('con2').value);
-            const con3 = parseFloat(document.getElementById('con3').value);
-
-            const con4 = parseFloat(document.getElementById('con4').value);
-            const con5 = parseFloat(document.getElementById('con5').value);
-            const con6 = parseFloat(document.getElementById('con6').value);
-
             // Check if inputs are valid numbers
             // if (isNaN(num1) || isNaN(num2)) {
             //     alert('Будь ласка, введіть коректні числа');
             //     return;
             // }
 
-            //-- Графіки
+            // -- Графіки
 
             const ctx = document.getElementById('myChart').getContext('2d');
-            
-            const data = [];
-            data.push({x: con3 / con2, y: 0});
-            data.push({x: 0, y: con3 / con1});
-            data.push({x: con6 / con5, y: 0});
-            data.push({x: 0, y: con6 / con4});
 
             const datasets = [];
             for (let i = 0; i < 2; i++) {
+                // -- Читання обмежень для кожної ітерації
+                const data = [];
+
+                const con1 = parseFloat(document.getElementById('con' + i + 1).value);
+                const con2 = parseFloat(document.getElementById('con' + i + 2).value);
+                const con3 = parseFloat(document.getElementById('con' + i + 3).value);
+
+                data.push({x: con3 / con2, y: 0});
+                data.push({x: 0, y: con3 / con1});
+
+                // -----------------------
+
                 datasets.push({
                     label: `Лінія ${i + 1}`,
                     data: data,

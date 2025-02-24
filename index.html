@@ -65,6 +65,8 @@
     </div>
 
     <script>
+        let myChart;
+
         document.getElementById('mainForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent form submission
 
@@ -111,7 +113,10 @@
             }
 
             // Створюємо графік
-            new Chart(ctx, {
+            if (myChart) {
+                myChart.destroy();
+            }
+            myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     datasets: datasets

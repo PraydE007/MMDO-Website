@@ -91,18 +91,16 @@
             const ctx = document.getElementById('myChart').getContext('2d');
             
             const data = [];
-            // data.push({x: con3 / con2, y: con3 / con1});
-            // data.push({x: con6 / con5, y: con6 / con4});
-            // data.push(con3 / con2);
-            // data.push(con3 / con1);
-            // data.push(con6 / con5);
-            // data.push(con6 / con4);
+            data.push({x: con3 / con2, y: 0});
+            data.push({x: 0, y: con3 / con1});
+            data.push({x: con6 / con5, y: 0});
+            data.push({x: 0, y: con6 / con4});
 
             const datasets = [];
             for (let i = 0; i < 2; i++) {
                 datasets.push({
                     label: `Лінія ${i + 1}`,
-                    data: [3, 0, 0, 6, 0, 2, 7, 0],
+                    data: data,
                     borderColor: `hsl(${i * 60}, 70%, 50%)`, // Генеруємо різні кольори
                     backgroundColor: 'transparent',
                     borderWidth: 2

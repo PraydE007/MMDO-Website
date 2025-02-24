@@ -17,38 +17,38 @@
                 <div class="flex items-center space-x-4">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">Max Z =</p>
                     <input type="number"
-                        id="number1"
+                        id="var1"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub> +</p>
                     <input type="number"
-                        id="number2"
+                        id="var2"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>2</sub></p>
                 </div>
                 <div class="flex items-center space-x-4">
                     <input type="number"
-                        id="number3"
+                        id="con1"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub> + </p>
                     <input type="number"
-                        id="number4"
+                        id="con2"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>2</sub> ≤ </p>
                     <input type="number"
-                        id="number5"
+                        id="con3"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                 </div>
                 <div class="flex items-center space-x-4">
                     <input type="number"
-                        id="number6"
+                        id="con4"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub> + </p>
                     <input type="number"
-                        id="number7"
+                        id="con5"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>2</sub> ≤ </p>
                     <input type="number"
-                        id="number8"
+                        id="con6"
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                 </div>
                 <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub>, x<sub>2</sub>, ... ≥ 0</p>
@@ -69,63 +69,69 @@
             e.preventDefault(); // Prevent form submission
 
             // Get input values
-            const num1 = parseFloat(document.getElementById('number1').value);
-            const num2 = parseFloat(document.getElementById('number2').value);
+            const var1 = parseFloat(document.getElementById('var1').value);
+            const var2 = parseFloat(document.getElementById('var2').value);
+
+            const con1 = parseFloat(document.getElementById('con1').value);
+            const con2 = parseFloat(document.getElementById('con2').value);
+            const con3 = parseFloat(document.getElementById('con3').value);
+
+            const con4 = parseFloat(document.getElementById('con4').value);
+            const con5 = parseFloat(document.getElementById('con5').value);
+            const con6 = parseFloat(document.getElementById('con6').value);
 
             // Check if inputs are valid numbers
-            if (isNaN(num1) || isNaN(num2)) {
-                alert('Будь ласка, введіть коректні числа');
-                return;
-            }
-
-            // Calculate sum and update heading
-            const sum = num1 + num2;
-            const heading = this.querySelector('h1');
-            heading.textContent = sum.toString();
+            // if (isNaN(num1) || isNaN(num2)) {
+            //     alert('Будь ласка, введіть коректні числа');
+            //     return;
+            // }
 
             //-- Графіки
 
-            // Функція, яку хочемо намалювати (наприклад, y = x^2)
-        function generateData(func, rangeStart, rangeEnd, step = 0.1) {
             const data = [];
-            for (let x = rangeStart; x <= rangeEnd; x += step) {
-                data.push({ x: x, y: func(x) });
-            }
-            return data;
-        }
+            data.push({ x: con3 / con2, y: con3 / con1 });
+            data.push({ x: con6 / con5, y: con6 / con4 });
 
-        // Визначаємо саму функцію (наприклад, y = x^2)
-        const functionData = generateData(x => x * x, -5, 5, 0.1);
+            // function generateData(func, rangeStart, rangeEnd, step = 0.1) {
+            //     const data = [];
+            //     for (let x = rangeStart; x <= rangeEnd; x += step) {
+            //         data.push({ x: x, y: func(x) });
+            //     }
+            //     return data;
+            // }
 
-        // Отримуємо canvas
-        const ctx = document.getElementById('myChart').getContext('2d');
+            // Визначаємо саму функцію (наприклад, y = x^2)
+            // const functionData = generateData(x => x * x, -5, 5, 0.1);
 
-        // Створюємо графік
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'y = x²',
-                    data: functionData, // Масив {x, y}
-                    borderColor: 'blue',
-                    borderWidth: 2,
-                    fill: false,
-                    pointRadius: 0 // Прибираємо точки для гладкого графіка
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        type: 'linear', // Декартова система координат
-                        position: 'bottom'
-                    },
-                    y: {
-                        type: 'linear'
+            // Отримуємо canvas
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            // Створюємо графік
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'x₁ = x₂',
+                        data: data, // functionData,
+                        borderColor: 'yellow',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0 // Прибираємо точки для гладкого графіка
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear', // Декартова система координат
+                            position: 'bottom'
+                        },
+                        y: {
+                            type: 'linear'
+                        }
                     }
                 }
-            }
-        });
+            });
         });
     </script>
 </body>

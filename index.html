@@ -87,9 +87,9 @@
                 // -- Читання обмежень для кожної ітерації
                 const data = [];
 
-                const con1 = parseFloat(document.getElementById('con' + i + 1).value);
-                const con2 = parseFloat(document.getElementById('con' + i + 2).value);
-                const con3 = parseFloat(document.getElementById('con' + i + 3).value);
+                const con1 = parseFloat(document.getElementById('con' + (i + 1)).value);
+                const con2 = parseFloat(document.getElementById('con' + (i + 2)).value);
+                const con3 = parseFloat(document.getElementById('con' + (i + 3)).value);
 
                 data.push({x: con3 / con2, y: 0});
                 data.push({x: 0, y: con3 / con1});

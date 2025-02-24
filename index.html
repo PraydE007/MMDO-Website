@@ -91,12 +91,8 @@
             const ctx = document.getElementById('myChart').getContext('2d');
             
             const data = [];
-            for (let j = 0; j < 2; j++) {  // Генеруємо кілька точок для кожної лінії
-                data.push({
-                    x: j * (con3 / con2),
-                    y: j * (con3 / con1)
-                });
-            }
+            data.push({x: con3 / con2, y: con3 / con1});
+            data.push({x: con6 / con5, y: con6 / con4});
 
             const datasets = [];
             for (let i = 0; i < 2; i++) {

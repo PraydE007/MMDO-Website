@@ -110,7 +110,7 @@
             for (let i = 0; i < 4; i++) {
                 datasets.push({
                     label: `Лінія ${i + 1}`,
-                    data: labels.map(() => Math.floor(Math.random() * 100)), // Випадкові числа для кожної лінії
+                    data: [(i * 1), (i * 2)], // Випадкові числа для кожної лінії
                     borderColor: `hsl(${i * 60}, 70%, 50%)`, // Генеруємо різні кольори
                     backgroundColor: 'transparent',
                     borderWidth: 2

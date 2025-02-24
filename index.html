@@ -79,6 +79,7 @@
         function updateValue(change) {
             const counterInput = document.getElementById('c-counter');
             let newValue = parseInt(counterInput.value, 10) + change;
+            newValue = newValue > 0 ? newValue : 0;
             counterInput.value = newValue;
             counterInput.dispatchEvent(new Event('change')); // Викликаємо подію зміни
         }

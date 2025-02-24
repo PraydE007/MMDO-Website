@@ -88,20 +88,6 @@
 
             //-- Графіки
 
-            data.push({ x: con3 / con2, y: con3 / con1 });
-            
-            // function generateData(func, rangeStart, rangeEnd, step = 0.1) {
-            //     const data = [];
-            //     for (let x = rangeStart; x <= rangeEnd; x += step) {
-            //         data.push({ x: x, y: func(x) });
-            //     }
-            //     return data;
-            // }
-            
-            // Визначаємо саму функцію (наприклад, y = x^2)
-            // const functionData = generateData(x => x * x, -5, 5, 0.1);
-            
-            // Отримуємо canvas
             const ctx = document.getElementById('myChart').getContext('2d');
             
             const datasets = [];

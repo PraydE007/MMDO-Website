@@ -112,11 +112,19 @@
                 data: {
                     datasets: [{
                         label: 'x₁ = x₂',
-                        data: data, // functionData,
+                        data: { x: con3 / con2, y: con3 / con1 },
                         borderColor: 'yellow',
                         borderWidth: 2,
                         fill: false,
-                        pointRadius: 0 // Прибираємо точки для гладкого графіка
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'x₁ = x₂',
+                        data: { x: con6 / con5, y: con6 / con4 },
+                        borderColor: 'yellow',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
                     }]
                 },
                 options: {

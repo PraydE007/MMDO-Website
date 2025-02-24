@@ -90,18 +90,16 @@
 
             const ctx = document.getElementById('myChart').getContext('2d');
             
+            const data = [];
+            for (let j = 0; j < 2; j++) {  // Генеруємо кілька точок для кожної лінії
+                data.push({
+                    x: j * (con3 / con2),
+                    y: j * (con3 / con1)
+                });
+            }
+
             const datasets = [];
-            // const data = [];
-            for (let i = 0; i < 4; i++) {
-                const data = [];
-
-                for (let j = 0; j < 10; j++) {  // Генеруємо кілька точок для кожної лінії
-                    data.push({
-                        x: j * (con3 / con2),
-                        y: j * (con3 / con1) + i * 5 // Щоб лінії не накладалися
-                    });
-                }
-
+            for (let i = 0; i < 2; i++) {
                 datasets.push({
                     label: `Лінія ${i + 1}`,
                     data: data, // Випадкові числа для кожної лінії

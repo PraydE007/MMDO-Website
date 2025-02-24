@@ -73,6 +73,16 @@
     <script>
         let myChart;
 
+        const decreaseBtn = document.getElementById('decrease').addEventListener('click', () => updateValue(-1));
+        const increaseBtn = document.getElementById('increase').addEventListener('click', () => updateValue(1));
+
+        function updateValue(change) {
+            const counterInput = document.getElementById('c-counter');
+            let newValue = parseInt(counterInput.value, 10) + change;
+            counterInput.value = newValue;
+            counterInput.dispatchEvent(new Event('change')); // Викликаємо подію зміни
+        }
+
         document.getElementById('mainForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent form submission
 

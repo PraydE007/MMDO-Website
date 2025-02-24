@@ -15,6 +15,12 @@
         <form class="space-y-6 animate-fade-in" id="mainForm">
             <div class="space-y-4">
                 <div class="flex items-center space-x-4">
+                    <p class="text-3xl md:text-3xl lg:text-3xl text-white">Кількість обмежень: </p>
+                    <button id="decrease" class="px-3 py-1 bg-gray-300 rounded">-</button>
+                    <input id="counter" type="number" min="0" value="0" class="w-16 text-center border border-gray-300 rounded" />
+                    <button id="increase" class="px-3 py-1 bg-gray-300 rounded">+</button>
+                  </div>
+                <div class="flex items-center space-x-4">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">Max Z =</p>
                     <input type="number"
                         id="var1"

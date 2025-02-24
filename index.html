@@ -88,10 +88,8 @@
 
             //-- Графіки
 
-            const data = [];
             data.push({ x: con3 / con2, y: con3 / con1 });
-            data.push({ x: con6 / con5, y: con6 / con4 });
-
+            
             // function generateData(func, rangeStart, rangeEnd, step = 0.1) {
             //     const data = [];
             //     for (let x = rangeStart; x <= rangeEnd; x += step) {
@@ -99,18 +97,20 @@
             //     }
             //     return data;
             // }
-
+            
             // Визначаємо саму функцію (наприклад, y = x^2)
             // const functionData = generateData(x => x * x, -5, 5, 0.1);
-
+            
             // Отримуємо canvas
             const ctx = document.getElementById('myChart').getContext('2d');
-
+            
             const datasets = [];
+            // const data = [];
             for (let i = 0; i < 4; i++) {
+                const data = { x: (i * (con3 / con2)), y: (i * (con3 / con1)) };
                 datasets.push({
                     label: `Лінія ${i + 1}`,
-                    data: [(i * 1), (i * 2)], // Випадкові числа для кожної лінії
+                    data: data, // Випадкові числа для кожної лінії
                     borderColor: `hsl(${i * 60}, 70%, 50%)`, // Генеруємо різні кольори
                     backgroundColor: 'transparent',
                     borderWidth: 2

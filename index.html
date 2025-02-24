@@ -74,7 +74,6 @@
     <script>
         let myChart;
 
-        const counterInput = document.getElementById('counter').addEventListener('change', updateParagraphs);;
         const decreaseBtn = document.getElementById('decrease').addEventListener('click', () => updateValue(-1));
         const increaseBtn = document.getElementById('increase').addEventListener('click', () => updateValue(1));
 
@@ -99,6 +98,7 @@
                 ccontainer.appendChild(p);
             }
         }
+        const counterInput = document.getElementById('counter').addEventListener('change', updateParagraphs);
 
         document.getElementById('mainForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent form submission

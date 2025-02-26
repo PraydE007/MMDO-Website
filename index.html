@@ -7,6 +7,7 @@
     <!-- Include Tailwind CSS from CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./victor.js"></script>
     <!-- Include local styles -->
     <link rel="stylesheet" href="./static/css/styles.css">
 </head>
@@ -31,33 +32,7 @@
                         class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                     <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>2</sub></p>
                 </div>
-                <div id="c-container" class="flex items-center space-x-4"></div>
-                <div class="flex items-center space-x-4">
-                    <input type="number"
-                        id="con1"
-                        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
-                    <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub> + </p>
-                    <input type="number"
-                        id="con2"
-                        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
-                    <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>2</sub> ≤ </p>
-                    <input type="number"
-                        id="con3"
-                        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
-                </div>
-                <div class="flex items-center space-x-4">
-                    <input type="number"
-                        id="con4"
-                        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
-                    <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub> + </p>
-                    <input type="number"
-                        id="con5"
-                        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
-                    <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>2</sub> ≤ </p>
-                    <input type="number"
-                        id="con6"
-                        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
-                </div>
+                <div id="c-container" class="flex flex-col space-y-4"></div>
                 <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub>, x<sub>2</sub>, ... ≥ 0</p>
                 <button type="submit"
                         class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
@@ -72,15 +47,56 @@
     </div>
 
     <script>
+        function slopeDifferenceRatio(A, B)
+        {
+            return (B.y - A.y) / (B.x - A.x);
+        }
+
+        function linearEquationForY(k, x, b)
+        {
+            return k * x + b;
+        }
+
+        function linearEquationForX(k, y, b)
+        {
+            // return b + (k * y);
+            return (y - b) / k;
+        }
+
+        /*
+            LIMITS1 - нижній поріг (-x, -y)
+            LIMITS2 - верхній поріг (x, y)
+        */
+        function findEdgePoint(A, B, LIMITS1, LIMITS2)
+        {
+            let x, y;
+
+            // Знаходимо в якому напрямку дивиться відрізок від А до B та вибираємо відповідні ліміти
+            if (B.x >= A.x)
+                x = LIMITS2.x;
+            else
+                x = LIMITS1.x;
+            if (B.y >= A.y)
+                y = LIMITS2.y;
+            else
+                y = LIMITS1.y;
+
+            let K = slopeDifferenceRatio(A, B);
+            let Point1 = Victor(x, linearEquationForY(K, x, A.y));
+            let Point2 = Victor(-linearEquationForX(K, y, -A.y), -y);
+
+            return [Point1, Point2];
+        }
+
         let myChart;
 
-        const counterInput = document.getElementById('c-counter').addEventListener('change', updateParagraphs);
-        const decreaseBtn = document.getElementById('decrease').addEventListener('click', () => updateValue(-1));
-        const increaseBtn = document.getElementById('increase').addEventListener('click', () => updateValue(1));
+        const counterInput = document.getElementById('c-counter').addEventListener('change', updateConstraints);
+        const decreaseBtn = document.getElementById('decrease').addEventListener('click', () => updateCValue(-1));
+        const increaseBtn = document.getElementById('increase').addEventListener('click', () => updateCValue(1));
 
         const ccontainer = document.getElementById('c-container');
 
-        function updateValue(change) {
+        function updateCValue(change) {
             const counterInput = document.getElementById('c-counter');
             let newValue = parseInt(counterInput.value) + change;
             newValue = newValue > 0 ? newValue : 0;
@@ -88,15 +104,42 @@
             counterInput.dispatchEvent(new Event('change')); // Викликаємо подію зміни
         }
 
-        function updateParagraphs() {
+        function updateConstraints() {
             const count = parseFloat(document.getElementById('c-counter').value);
             ccontainer.innerHTML = ''; // Очищаємо контейнер
 
             for (let i = 0; i < count; i++) {
                 const div = document.createElement('div');
-                div.textContent = ``;
                 div.classList.add(...("flex items-center space-x-4").split(" "));
                 ccontainer.appendChild(div);
+
+                const input1 = document.createElement('input');
+                input1.type = "number";
+                input1.id = "con" + (i * 3 + 1);
+                input1.classList.add(...("px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors").split(" "));
+                div.appendChild(input1);
+
+                const p1 = document.createElement('p');
+                p1.innerHTML = "x<sub>1</sub> + ";
+                p1.classList.add(...("text-3xl md:text-3xl lg:text-3xl text-white").split(" "));
+                div.appendChild(p1);
+
+                const input2 = document.createElement('input');
+                input2.type = "number";
+                input2.id = "con" + (i * 3 + 2);
+                input2.classList.add(...("px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors").split(" "));
+                div.appendChild(input2);
+
+                const p2 = document.createElement('p');
+                p2.innerHTML = "x<sub>2</sub> ≤ ";
+                p2.classList.add(...("text-3xl md:text-3xl lg:text-3xl text-white").split(" "));
+                div.appendChild(p2);
+
+                const input3 = document.createElement('input');
+                input3.type = "number";
+                input3.id = "con" + (i * 3 + 3);
+                input3.classList.add(...("px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-colors").split(" "));
+                div.appendChild(input3);
             }
         }
 
@@ -127,24 +170,55 @@
                 const con2 = parseFloat(document.getElementById('con' + (i * 3 + 2)).value);
                 const con3 = parseFloat(document.getElementById('con' + (i * 3 + 3)).value);
 
-                let x1 = con3 / con2;
-                x1 = x1 > 0 ? x1 : 0;
-                let x2 = con3 / con1;
-                x2 = x2 > 0 ? x2 : 0;
+                let x2 = con3 / con2;
+                let x1 = con3 / con1;
 
-                data.push({x: x1, y: 0});
-                data.push({x: 0, y: x2});
+                let A = Victor(0, x2);
+                let B = Victor(x1, 0);
+
+                if (con2 == 0)
+                {
+                    data.push({x: B.x, y: 10});
+                    data.push({x: B.x, y: -10});
+                }
+                else if (con1 == 0)
+                {
+                    data.push({x: -10, y: A.y});
+                    data.push({x: 10, y: A.y});
+                }
+                else
+                {
+                    let eA = findEdgePoint(A, B, Victor(-10, -10), Victor(10, 10));
+                    data.push({x: eA[0].x, y: eA[0].y});
+                    data.push({x: eA[1].x, y: eA[1].y});
+                }
 
                 // -----------------------
 
                 datasets.push({
                     label: `Лінія ${i + 1}`,
                     data: data,
-                    borderColor: `hsl(${i * 60}, 70%, 50%)`, // Генеруємо різні кольори
+                    borderColor: "white", //`hsl(${i * 60}, 70%, 50%)`,
                     backgroundColor: 'transparent',
                     borderWidth: 2
                 });
             }
+            
+            // Обмеження по 0
+            const data = [];
+            data.push({x: -10, y: 0});
+            data.push({x: 10, y: 0});
+            data.push({x: 0, y: 0});
+            data.push({x: 0, y: -10});
+            data.push({x: 0, y: 10});
+            data.push({x: 0, y: 0});
+            datasets.push({
+                label: `Система`,
+                data: data,
+                borderColor: "red", //`hsl(${i * 60}, 70%, 50%)`,
+                backgroundColor: 'transparent',
+                borderWidth: 1
+            });
 
             // Створюємо графік
             if (myChart) {
@@ -160,10 +234,13 @@
                     scales: {
                         x: {
                             type: 'linear', // Декартова система координат
-                            position: 'bottom'
+                            min: -20,  // Задаємо межі для осі X
+                            max: 20,
                         },
                         y: {
-                            type: 'linear'
+                            type: 'linear',
+                            min: -20,  // Задаємо межі для осі Y
+                            max: 20,
                         }
                     }
                 }
@@ -172,3 +249,77 @@
     </script>
 </body>
 </html>
+
+<!-- const datasets = [];
+const data = [];
+const defaultPoints = [];
+
+let LIMITS1 = Victor(-2, -2);
+let LIMITS2 = Victor(2, 2);
+
+for (let i = 0; i < ccount; i++) {
+    const con1 = parseFloat(document.getElementById('con' + (i * 3 + 1)).value);
+    const con2 = parseFloat(document.getElementById('con' + (i * 3 + 2)).value);
+    const con3 = parseFloat(document.getElementById('con' + (i * 3 + 3)).value);
+
+    let x2 = con3 / con2;
+    let x1 = con3 / con1;
+
+    // Маштабування графіку
+    if (x1 < LIMITS1.x)
+        LIMITS1.x = x1;
+    if (x1 > LIMITS2.x)
+        LIMITS2.x = x1;
+    if (x2 < LIMITS1.y)
+        LIMITS1.y = x2;
+    if (x2 > LIMITS2.y)
+        LIMITS2.y = x2;
+
+    defaultPoints.push(Victor(0, x2));
+    defaultPoints.push(Victor(x1, 0));
+}
+
+for (let i = 0; i < defaultPoints.length / 2; i += 2) {
+    let A = defaultPoints[i];
+    let B = defaultPoints[i + 1];
+
+    if (con2 == 0)
+    {
+        data.push({x: B.x, y: LIMITS2.y});
+        data.push({x: B.x, y: LIMITS1.y});
+    }
+    else if (con1 == 0)
+    {
+        data.push({x: LIMITS1.x, y: A.y});
+        data.push({x: LIMITS2.x, y: A.y});
+    }
+    else
+    {
+        let eA = findEdgePoint(A, B, LIMITS1, LIMITS2);
+        data.push({x: eA[0].x, y: eA[0].y});
+        data.push({x: eA[1].x, y: eA[1].y});
+    }
+
+    datasets.push({
+        label: `Лінія ${i + 1}`,
+        data: data,
+        borderColor: "white", // `hsl(${i * 60}, 70%, 50%)`,
+        backgroundColor: 'transparent',
+        borderWidth: 2
+    });
+}
+
+// Система координат
+data.push({x: LIMITS1.x, y: 0});
+data.push({x: LIMITS2.x, y: 0});
+data.push({x: 0, y: 0});
+data.push({x: 0, y: LIMITS1.y});
+data.push({x: 0, y: LIMITS2.y});
+data.push({x: 0, y: 0});
+datasets.push({
+    label: `Система координат`,
+    data: data,
+    borderColor: "red", // `hsl(${i * 60}, 70%, 50%)`,
+    backgroundColor: 'transparent',
+    borderWidth: 1
+}); -->

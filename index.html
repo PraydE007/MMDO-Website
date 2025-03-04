@@ -34,6 +34,10 @@
                 </div>
                 <div id="c-container" class="flex flex-col space-y-4"></div>
                 <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub>, x<sub>2</sub>, ... ≥ 0</p>
+                <button type="button" id="default-example"
+                        class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Значення за замовчуванням
+                </button>
                 <button type="submit"
                         class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
                     Рахувати
@@ -61,6 +65,42 @@
         {
             // return b + (k * y);
             return (y - b) / k;
+        }
+
+        function findIntersection(A, B, C, D) {
+            // Розрахунок коефіцієнтів для рівнянь прямих
+            const a1 = B.y - A.y;
+            const b1 = A.x - B.x;
+            const c1 = a1 * A.x + b1 * A.y;
+
+            const a2 = D.y - C.y;
+            const b2 = C.x - D.x;
+            const c2 = a2 * C.x + b2 * C.y;
+
+            // Визначення детермінанта
+            const determinant = a1 * b2 - a2 * b1;
+
+            if (determinant === 0) {
+                // Прямі паралельні або співпадають
+                return null;
+            } else {
+                // Обчислення координат точки перетину
+                const x = (b2 * c1 - b1 * c2) / determinant;
+                const y = (a1 * c2 - a2 * c1) / determinant;
+
+                // Перевірка, чи точка перетину лежить на обох відрізках
+                if (
+                    Math.min(A.x, B.x) <= x && x <= Math.max(A.x, B.x) &&
+                    Math.min(A.y, B.y) <= y && y <= Math.max(A.y, B.y) &&
+                    Math.min(C.x, D.x) <= x && x <= Math.max(C.x, D.x) &&
+                    Math.min(C.y, D.y) <= y && y <= Math.max(C.y, D.y)
+                ) {
+                    return { x, y };
+                } else {
+                    // Точка перетину не лежить на обох відрізках
+                    return null;
+                }
+            }
         }
 
         /*
@@ -143,6 +183,31 @@
             }
         }
 
+        // Defaults button
+        document.getElementById('default-example').addEventListener('click', function(e)
+        {
+            e.preventDefault(); // Prevent form submission
+
+            const counterInput = document.getElementById('c-counter');
+            counterInput.value = 4;
+            counterInput.dispatchEvent(new Event('change')); // Викликаємо подію зміни
+
+            document.getElementById('var1').value = 5;
+            document.getElementById('var2').value = 4;
+            document.getElementById('con1').value = 6;
+            document.getElementById('con2').value = 4;
+            document.getElementById('con3').value = 24;
+            document.getElementById('con4').value = 1;
+            document.getElementById('con5').value = 2;
+            document.getElementById('con6').value = 6;
+            document.getElementById('con7').value = -1;
+            document.getElementById('con8').value = 1;
+            document.getElementById('con9').value = 1;
+            document.getElementById('con10').value = 0;
+            document.getElementById('con11').value = 1;
+            document.getElementById('con12').value = 2;
+        });
+
         document.getElementById('mainForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent form submission
 
@@ -151,17 +216,19 @@
             const var1 = parseFloat(document.getElementById('var1').value);
             const var2 = parseFloat(document.getElementById('var2').value);
 
-            // Check if inputs are valid numbers
-            // if (isNaN(num1) || isNaN(num2)) {
-            //     alert('Будь ласка, введіть коректні числа');
-            //     return;
-            // }
+            // Перевірка на введення
+            if (isNaN(var1) || isNaN(var2)) {
+                alert('Будь ласка, введіть коректні числа');
+                return;
+            }
 
             // -- Графіки
 
             const ctx = document.getElementById('myChart').getContext('2d');
-
             const datasets = [];
+            let LIMITS1 = Victor(-2, -2);
+            let LIMITS2 = Victor(2, 2);
+
             for (let i = 0; i < ccount; i++) {
                 // -- Читання обмежень для кожної ітерації
                 const data = [];
@@ -170,25 +237,40 @@
                 const con2 = parseFloat(document.getElementById('con' + (i * 3 + 2)).value);
                 const con3 = parseFloat(document.getElementById('con' + (i * 3 + 3)).value);
 
+                if (isNaN(con1) || isNaN(con2) || isNaN(con3)) {
+                    alert('Будь ласка, введіть коректні числа');
+                    return;
+                }
+
                 let x2 = con3 / con2;
                 let x1 = con3 / con1;
+
+                // Маштабування графіку
+                if (x1 < LIMITS1.x && isFinite(x1))
+                    LIMITS1.x = x1;
+                if (x1 > LIMITS2.x && isFinite(x1))
+                    LIMITS2.x = x1;
+                if (x2 < LIMITS1.y && isFinite(x2))
+                    LIMITS1.y = x2;
+                if (x2 > LIMITS2.y && isFinite(x2))
+                    LIMITS2.y = x2;
 
                 let A = Victor(0, x2);
                 let B = Victor(x1, 0);
 
                 if (con2 == 0)
                 {
-                    data.push({x: B.x, y: 10});
-                    data.push({x: B.x, y: -10});
+                    data.push({x: B.x, y: 100});
+                    data.push({x: B.x, y: -100});
                 }
                 else if (con1 == 0)
                 {
-                    data.push({x: -10, y: A.y});
-                    data.push({x: 10, y: A.y});
+                    data.push({x: -100, y: A.y});
+                    data.push({x: 100, y: A.y});
                 }
                 else
                 {
-                    let eA = findEdgePoint(A, B, Victor(-10, -10), Victor(10, 10));
+                    let eA = findEdgePoint(A, B, Victor(-100, -100), Victor(100, 100));
                     data.push({x: eA[0].x, y: eA[0].y});
                     data.push({x: eA[1].x, y: eA[1].y});
                 }
@@ -206,11 +288,11 @@
             
             // Обмеження по 0
             const data = [];
-            data.push({x: -10, y: 0});
-            data.push({x: 10, y: 0});
+            data.push({x: -100, y: 0});
+            data.push({x: 100, y: 0});
             data.push({x: 0, y: 0});
-            data.push({x: 0, y: -10});
-            data.push({x: 0, y: 10});
+            data.push({x: 0, y: -100});
+            data.push({x: 0, y: 100});
             data.push({x: 0, y: 0});
             datasets.push({
                 label: `Система`,
@@ -234,13 +316,13 @@
                     scales: {
                         x: {
                             type: 'linear', // Декартова система координат
-                            min: -20,  // Задаємо межі для осі X
-                            max: 20,
+                            min: LIMITS1.x,  // Задаємо межі для осі X
+                            max: LIMITS2.x,
                         },
                         y: {
                             type: 'linear',
-                            min: -20,  // Задаємо межі для осі Y
-                            max: 20,
+                            min: LIMITS1.y,  // Задаємо межі для осі Y
+                            max: LIMITS2.y,
                         }
                     }
                 }

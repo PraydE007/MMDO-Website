@@ -34,12 +34,16 @@
                 </div>
                 <div id="c-container" class="flex flex-col space-y-4"></div>
                 <p class="text-3xl md:text-3xl lg:text-3xl text-white">x<sub>1</sub>, x<sub>2</sub>, ... ≥ 0</p>
+                <button type="button" id="default-example"
+                        class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Значення за замовчуванням
+                </button>
                 <button type="submit"
                         class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
                     Рахувати
                 </button>
             </div>
-            <h1 class="text-4xl md:text-6xl lg:text-8xl font-bold text-white tracking-wider mb-8">
+            <h1 id="result-text" class="text-xl md:text-2xl lg:text-4xl font-bold text-white tracking-normal mb-4">
                 &nbsp;
             </h1>
             <canvas id="myChart"></canvas>
@@ -61,6 +65,47 @@
         {
             // return b + (k * y);
             return (y - b) / k;
+        }
+
+        function findIntersection(A, B, C, D)
+        {
+            // Розрахунок коефіцієнтів для рівнянь прямих
+            const a1 = B.y - A.y;
+            const b1 = A.x - B.x;
+            const c1 = a1 * A.x + b1 * A.y;
+
+            const a2 = D.y - C.y;
+            const b2 = C.x - D.x;
+            const c2 = a2 * C.x + b2 * C.y;
+
+            // Визначення детермінанта
+            const determinant = a1 * b2 - a2 * b1;
+
+            if (determinant === 0)
+            {
+                // Прямі паралельні або співпадають
+                return null;
+            }
+            else
+            {
+                // Обчислення координат точки перетину
+                const x = (b2 * c1 - b1 * c2) / determinant;
+                const y = (a1 * c2 - a2 * c1) / determinant;
+
+                // Перевірка, чи точка перетину лежить на обох відрізках
+                if (Math.min(A.x, B.x) <= x && x <= Math.max(A.x, B.x) &&
+                    Math.min(A.y, B.y) <= y && y <= Math.max(A.y, B.y) &&
+                    Math.min(C.x, D.x) <= x && x <= Math.max(C.x, D.x) &&
+                    Math.min(C.y, D.y) <= y && y <= Math.max(C.y, D.y))
+                {
+                    return Victor(x, y);
+                }
+                else
+                {
+                    // Точка перетину не лежить на обох відрізках
+                    return null;
+                }
+            }
         }
 
         /*
@@ -89,6 +134,8 @@
         }
 
         let myChart;
+        let currentVars = [];
+        let currentConstraints = [];
 
         const counterInput = document.getElementById('c-counter').addEventListener('change', updateConstraints);
         const decreaseBtn = document.getElementById('decrease').addEventListener('click', () => updateCValue(-1));
@@ -96,7 +143,8 @@
 
         const ccontainer = document.getElementById('c-container');
 
-        function updateCValue(change) {
+        function updateCValue(change)
+        {
             const counterInput = document.getElementById('c-counter');
             let newValue = parseInt(counterInput.value) + change;
             newValue = newValue > 0 ? newValue : 0;
@@ -104,11 +152,13 @@
             counterInput.dispatchEvent(new Event('change')); // Викликаємо подію зміни
         }
 
-        function updateConstraints() {
+        function updateConstraints()
+        {
             const count = parseFloat(document.getElementById('c-counter').value);
             ccontainer.innerHTML = ''; // Очищаємо контейнер
 
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++)
+            {
                 const div = document.createElement('div');
                 div.classList.add(...("flex items-center space-x-4").split(" "));
                 ccontainer.appendChild(div);
@@ -143,7 +193,132 @@
             }
         }
 
-        document.getElementById('mainForm').addEventListener('submit', function(e) {
+        function addGrid(dataset)
+        {
+            const data = [];
+
+            data.push({x: -100, y: 0});
+            data.push({x: 100, y: 0});
+            data.push({x: 0, y: 0});
+            data.push({x: 0, y: -100});
+            data.push({x: 0, y: 100});
+            data.push({x: 0, y: 0});
+
+            dataset.push({
+                label: `Система`,
+                data: data,
+                borderColor: "red", //`hsl(${i * 60}, 70%, 50%)`,
+                backgroundColor: 'transparent',
+                borderWidth: 1
+            });
+        }
+
+        // lines - представляє собою точки відрізків A,-B, C,-D, etc
+        function allIntersactions(lines)
+        {
+            if (lines.length < 4 || lines.length % 2 != 0) return [];
+            const intersections = [];
+
+            const segments = [];
+            for (let i = 0; i < lines.length - 1; i += 2)
+            {
+                segments.push([lines[i], lines[i + 1]]);
+            }
+
+            for (let i = 0; i < segments.length; i++)
+            {
+                for (let j = i + 1; j < segments.length; j++)
+                {
+                    const [p1, p2] = segments[i];
+                    const [p3, p4] = segments[j];
+
+                    const intersection = findIntersection(p1, p2, p3, p4);
+                    if (intersection)
+                    {
+                        intersections.push(intersection);
+                    }
+                }
+            }
+
+            return intersections;
+        }
+
+        function intersectionFilter(intersections)
+        {
+            let filtered = [];
+
+            for (let i = 0; i < intersections.length; i++)
+            {
+                if (checkEquations(intersections[i]))
+                {
+                    filtered.push(intersections[i]);
+                }
+            }
+
+            return filtered;
+        }
+
+        function checkEquations(intersection)
+        {
+            for (let i = 0; i < currentConstraints.length; i++)
+            {
+                if (intersection.x < 0 || intersection.y < 0)
+                {
+                    return false;
+                }
+                if (currentConstraints[i][0] * intersection.x + currentConstraints[i][1] * intersection.y > currentConstraints[i][2])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function maxZ(intersections)
+        {
+            let bestId = -999999;
+            let Z = -999999;
+
+            for (let i = 0; i < intersections.length; i++)
+            {
+                let res = currentVars[0] * intersections[i].x + currentVars[1] * intersections[i].y;
+                if (res > Z)
+                {
+                    bestId = i;
+                    Z = res;
+                }
+            }
+
+            if (bestId < 0)
+            {
+                return null;
+            }
+            return {id: bestId, maxZ: Z};
+        }
+
+        // Defaults button (кнопка зі звичайними налаштуваннями)
+        document.getElementById('default-example').addEventListener('click', function(e)
+        {
+            e.preventDefault(); // Prevent form submission
+
+            const counterInput = document.getElementById('c-counter');
+            counterInput.value = 4;
+            counterInput.dispatchEvent(new Event('change')); // Викликаємо подію зміни
+
+            const defVars = [5, 4];
+            const defCons = [6, 4, 24, 1, 2, 6, -1, 1, 1, 0, 1, 2];
+
+            document.getElementById('var1').value = defVars[0];
+            document.getElementById('var2').value = defVars[1];
+
+            for (let i = 0; i < defCons.length; i++)
+            {
+                document.getElementById('con' + (i + 1)).value = defCons[i];
+            }
+        });
+
+        document.getElementById('mainForm').addEventListener('submit', function(e)
+        {
             e.preventDefault(); // Prevent form submission
 
             // Get input values
@@ -151,18 +326,26 @@
             const var1 = parseFloat(document.getElementById('var1').value);
             const var2 = parseFloat(document.getElementById('var2').value);
 
-            // Check if inputs are valid numbers
-            // if (isNaN(num1) || isNaN(num2)) {
-            //     alert('Будь ласка, введіть коректні числа');
-            //     return;
-            // }
+            currentVars.push(var1);
+            currentVars.push(var2);
+
+            // Перевірка на введення
+            if (isNaN(var1) || isNaN(var2))
+            {
+                alert('Будь ласка, введіть коректні числа');
+                return;
+            }
 
             // -- Графіки
 
             const ctx = document.getElementById('myChart').getContext('2d');
-
             const datasets = [];
-            for (let i = 0; i < ccount; i++) {
+            const globalPoints = [];
+            let LIMITS1 = Victor(-2, -2);
+            let LIMITS2 = Victor(2, 2);
+
+            for (let i = 0; i < ccount; i++)
+            {
                 // -- Читання обмежень для кожної ітерації
                 const data = [];
 
@@ -170,30 +353,51 @@
                 const con2 = parseFloat(document.getElementById('con' + (i * 3 + 2)).value);
                 const con3 = parseFloat(document.getElementById('con' + (i * 3 + 3)).value);
 
+                currentConstraints.push([con1, con2, con3]);
+
+                if (isNaN(con1) || isNaN(con2) || isNaN(con3))
+                {
+                    alert('Будь ласка, введіть коректні числа');
+                    return;
+                }
+
                 let x2 = con3 / con2;
                 let x1 = con3 / con1;
+
+                // Маштабування графіку (оновлення країв графіку)
+                if (x1 < LIMITS1.x && isFinite(x1))
+                    LIMITS1.x = x1;
+                if (x1 > LIMITS2.x && isFinite(x1))
+                    LIMITS2.x = x1;
+                if (x2 < LIMITS1.y && isFinite(x2))
+                    LIMITS1.y = x2;
+                if (x2 > LIMITS2.y && isFinite(x2))
+                    LIMITS2.y = x2;
 
                 let A = Victor(0, x2);
                 let B = Victor(x1, 0);
 
                 if (con2 == 0)
                 {
-                    data.push({x: B.x, y: 10});
-                    data.push({x: B.x, y: -10});
+                    data.push({x: B.x, y: 100});
+                    data.push({x: B.x, y: -100});
                 }
                 else if (con1 == 0)
                 {
-                    data.push({x: -10, y: A.y});
-                    data.push({x: 10, y: A.y});
+                    data.push({x: -100, y: A.y});
+                    data.push({x: 100, y: A.y});
                 }
                 else
                 {
-                    let eA = findEdgePoint(A, B, Victor(-10, -10), Victor(10, 10));
+                    let eA = findEdgePoint(A, B, Victor(-100, -100), Victor(100, 100));
                     data.push({x: eA[0].x, y: eA[0].y});
                     data.push({x: eA[1].x, y: eA[1].y});
                 }
 
                 // -----------------------
+
+                globalPoints.push(Victor(data[0].x, data[0].y));
+                globalPoints.push(Victor(data[1].x, data[1].y));
 
                 datasets.push({
                     label: `Лінія ${i + 1}`,
@@ -205,23 +409,43 @@
             }
             
             // Обмеження по 0
-            const data = [];
-            data.push({x: -10, y: 0});
-            data.push({x: 10, y: 0});
-            data.push({x: 0, y: 0});
-            data.push({x: 0, y: -10});
-            data.push({x: 0, y: 10});
-            data.push({x: 0, y: 0});
-            datasets.push({
-                label: `Система`,
-                data: data,
-                borderColor: "red", //`hsl(${i * 60}, 70%, 50%)`,
-                backgroundColor: 'transparent',
-                borderWidth: 1
-            });
+            addGrid(datasets);
+            // Додаємо сітку до урахування перетенів
+            globalPoints.push(Victor(-100, 0));
+            globalPoints.push(Victor(100, 0));
+            globalPoints.push(Victor(0, -100));
+            globalPoints.push(Victor(0, 100));
+
+            // Всі можлиі перетини
+            let intersections = allIntersactions(globalPoints);
+            let filteredIntersections = intersectionFilter(intersections);
+            let maxZStruct = maxZ(filteredIntersections);
+
+            const headerText = document.getElementById("result-text");
+            if (maxZStruct == null)
+            {
+                headerText.innerHTML = "Оптимального рішення не знайдено";
+            }
+            else
+            {
+                headerText.innerHTML = `Максимальний Z = ${maxZStruct.maxZ} при x<sub>1</sub> = ${filteredIntersections[maxZStruct.id].x} та x<sub>2</sub> ${filteredIntersections[maxZStruct.id].y}`;
+            }
+
+            for (let i = 0; i < filteredIntersections.length; i++)
+            {
+                datasets.push({
+                    label: `Пересічення ${i + 1}`,
+                    data: [{x: filteredIntersections[i].x, y: filteredIntersections[i].y}],
+                    borderColor: "yellow",
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    pointRadius: 5
+                });
+            }
 
             // Створюємо графік
-            if (myChart) {
+            if (myChart)
+            {
                 myChart.destroy();
             }
             myChart = new Chart(ctx, {
@@ -234,13 +458,13 @@
                     scales: {
                         x: {
                             type: 'linear', // Декартова система координат
-                            min: -10,  // Задаємо межі для осі X
-                            max: 10,
+                            min: LIMITS1.x,  // Задаємо межі для осі X
+                            max: LIMITS2.x,
                         },
                         y: {
                             type: 'linear',
-                            min: -10,  // Задаємо межі для осі Y
-                            max: 10,
+                            min: LIMITS1.y,  // Задаємо межі для осі Y
+                            max: LIMITS2.y,
                         }
                     }
                 }
@@ -249,77 +473,3 @@
     </script>
 </body>
 </html>
-
-<!-- const datasets = [];
-const data = [];
-const defaultPoints = [];
-
-let LIMITS1 = Victor(-2, -2);
-let LIMITS2 = Victor(2, 2);
-
-for (let i = 0; i < ccount; i++) {
-    const con1 = parseFloat(document.getElementById('con' + (i * 3 + 1)).value);
-    const con2 = parseFloat(document.getElementById('con' + (i * 3 + 2)).value);
-    const con3 = parseFloat(document.getElementById('con' + (i * 3 + 3)).value);
-
-    let x2 = con3 / con2;
-    let x1 = con3 / con1;
-
-    // Маштабування графіку
-    if (x1 < LIMITS1.x)
-        LIMITS1.x = x1;
-    if (x1 > LIMITS2.x)
-        LIMITS2.x = x1;
-    if (x2 < LIMITS1.y)
-        LIMITS1.y = x2;
-    if (x2 > LIMITS2.y)
-        LIMITS2.y = x2;
-
-    defaultPoints.push(Victor(0, x2));
-    defaultPoints.push(Victor(x1, 0));
-}
-
-for (let i = 0; i < defaultPoints.length / 2; i += 2) {
-    let A = defaultPoints[i];
-    let B = defaultPoints[i + 1];
-
-    if (con2 == 0)
-    {
-        data.push({x: B.x, y: LIMITS2.y});
-        data.push({x: B.x, y: LIMITS1.y});
-    }
-    else if (con1 == 0)
-    {
-        data.push({x: LIMITS1.x, y: A.y});
-        data.push({x: LIMITS2.x, y: A.y});
-    }
-    else
-    {
-        let eA = findEdgePoint(A, B, LIMITS1, LIMITS2);
-        data.push({x: eA[0].x, y: eA[0].y});
-        data.push({x: eA[1].x, y: eA[1].y});
-    }
-
-    datasets.push({
-        label: `Лінія ${i + 1}`,
-        data: data,
-        borderColor: "white", // `hsl(${i * 60}, 70%, 50%)`,
-        backgroundColor: 'transparent',
-        borderWidth: 2
-    });
-}
-
-// Система координат
-data.push({x: LIMITS1.x, y: 0});
-data.push({x: LIMITS2.x, y: 0});
-data.push({x: 0, y: 0});
-data.push({x: 0, y: LIMITS1.y});
-data.push({x: 0, y: LIMITS2.y});
-data.push({x: 0, y: 0});
-datasets.push({
-    label: `Система координат`,
-    data: data,
-    borderColor: "red", // `hsl(${i * 60}, 70%, 50%)`,
-    backgroundColor: 'transparent',
-    borderWidth: 1
-}); -->

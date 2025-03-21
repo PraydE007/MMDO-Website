@@ -1,20 +1,23 @@
 # MMDO Website
 
-A minimalist personal webpage that displays a user's name with a clean, modern design.
+* My first experience with JavaScript. Sorry for the code chaos! 😅 *
 
-## Features
-- Clean, modern design
-- Responsive layout
-- Fade-in animation
-- Built with HTML and Tailwind CSS
+##📊 Graphical Method for Solving the Simplex Method
+This project implements the graphical method for solving linear programming problems using the simplex method. It is part of a coursework project for the subject "Mathematical Methods of Operations Research."
 
-## Technologies Used
+##🔹 Features
+✔️ Visualization of the feasible solution region
+✔️ Graphical identification of the optimal solution
+✔️ Support for various objective functions and constraints
+✔️ Clean, modern design
+✔️ Responsive layout
+✔️ Fade-in animation
+✔️ Built with HTML and Tailwind CSS
+
+##📌 Technologies Used
+- JavaScript
+- Victor.js
+- Chart.js
 - HTML5
 - Tailwind CSS
 - CSS animations
-
-## Customization
-You can customize the appearance by:
-- Modifying the colors in the Tailwind classes
-- Adjusting the animation timing in the CSS
-- Changing the font sizes and spacing using Tailwind's utility classes

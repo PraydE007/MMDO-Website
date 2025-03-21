@@ -21,3 +21,6 @@ This project implements the graphical method for solving linear programming prob
 - HTML5
 - Tailwind CSS
 - CSS animations
+
+## Preview
+![](preview.png)

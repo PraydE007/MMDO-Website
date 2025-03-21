@@ -6,13 +6,13 @@
 This project implements the graphical method for solving linear programming problems using the simplex method. It is part of a coursework project for the subject "Mathematical Methods of Operations Research."
 
 ## 🔹 Features
-✔️ Visualization of the feasible solution region
-✔️ Graphical identification of the optimal solution
-✔️ Support for various objective functions and constraints
-✔️ Clean, modern design
-✔️ Responsive layout
-✔️ Fade-in animation
-✔️ Built with HTML and Tailwind CSS
+✔️ Visualization of the feasible solution region<br>
+✔️ Graphical identification of the optimal solution<br>
+✔️ Support for various objective functions and constraints<br>
+✔️ Clean, modern design<br>
+✔️ Responsive layout<br>
+✔️ Fade-in animation<br>
+✔️ Built with HTML and Tailwind CSS<br>
 
 ## 📌 Technologies Used
 - JavaScript

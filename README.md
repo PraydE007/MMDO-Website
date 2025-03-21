@@ -1,6 +1,6 @@
 # MMDO Website
 
-### /** My first experience with JavaScript. Sorry for the code chaos! 😅 **
+### ** My first experience with JavaScript. Sorry for the code chaos! 😅 **
 
 ## 📊 Graphical Method for Solving the Simplex Method
 This project implements the graphical method for solving linear programming problems using the simplex method. It is part of a coursework project for the subject "Mathematical Methods of Operations Research."
